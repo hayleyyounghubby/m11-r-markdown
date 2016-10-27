@@ -13,7 +13,19 @@ library(dplyr)
 
 # Write a function that allows you to specify a movie, then does the following:
 GetReview <- function(movie) {
-  
+  movie.no.spaces <-  gsub(" ", "+", movie)
+    base.url <- 'https://api.nytimes.com/svc/movies/v2/reviews/search.json?'
+    api.key <- '&api-key=0089fb447baf4fcfaa42c3b931aa4e09'
+    request <- paste0(base.url, 'query=', movie.no.spaces, api.key)
+    results <- fromJSON(request)
+    flattened <- flatten(results$results)
+    first.review <- flattened[1,]
+    headline <- first.review$headline
+    summary <- first.review$summary_short
+    link <- first.review$link.url
+    info <- list(headline=headline, summary=summary, link=link)
+    return(info)
+  }
   # Replace all of the spaces in your movie title with plus signs (+)
   
   
@@ -34,8 +46,18 @@ GetReview <- function(movie) {
   
   # Return an list of the three pieces of information from above
   
-}
 
 # Create a variable called `movie.info` by passing your movie to your GetReview function
-
+movie.info <- GetReview('If I Stay')
 ```
+``` {r, echo = FALSE}
+movie <- 'If I Stay'
+movie.info <- GetReview('If I Stay')
+```
+# `r movie`
+## `r movie.info$headline`
+>`r movie.info$summary`
+
+Link to the the full movie review: [This Link](`r movie.info$link`)
+
+
